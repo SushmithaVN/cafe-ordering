@@ -1,0 +1,75 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+#stickyBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #222;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+}
+
+#placeOrderBtn {
+  background: #25D366;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.qty-badge {
+  font-weight: bold;
+  margin-left: 10px;
+  color: #25D366;
+}
+
+body {
+  padding-bottom: 80px; /* so sticky bar doesn't cover last menu item */
+}
+
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.qty-controls button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 4px;
+  background: #25D366;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.qty-controls span {
+  min-width: 20px;
+  text-align: center;
+  font-weight: bold;
+}

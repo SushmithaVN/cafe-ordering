@@ -1,53 +1,220 @@
-body {
-  font-family: Arial, sans-serif;
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 20px;
+:root {
+  --color-bg: #1C1712;
+  --color-surface: #262019;
+  --color-border: #3A3226;
+  --color-text: #F5EFE6;
+  --color-text-muted: #B9AE9C;
+  --color-accent: #E0823C;
+  --color-accent-soft: rgba(224, 130, 60, 0.16);
+  --color-veg: #4CAF50;
+  --color-nonveg: #D64545;
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Work Sans', sans-serif;
+  --radius: 10px;
 }
 
-h1 {
-  text-align: center;
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  margin: 0;
+  padding: 0 0 90px 0;
+}
+
+/* Sticky top section: brand, table select, search, filters */
+#stickyTop {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg);
+  padding: 16px 16px 10px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.brand-row h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+.tagline {
+  margin: 2px 0 12px 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.table-select-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.table-select-row label {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+#tableNumber {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-family: var(--font-body);
+}
+
+#searchInput {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+#searchInput::placeholder { color: var(--color-text-muted); }
+
+#dietFilterRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.diet-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.diet-btn.active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #1C1712;
+}
+
+#categoryFilterRow {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+#categoryFilterRow::-webkit-scrollbar { display: none; }
+
+.category-chip {
+  flex: 0 0 auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.category-chip.active {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* Menu list */
+#menuContainer { padding: 4px 16px; }
+
+.loading-text, .empty-state {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  padding: 20px 0;
+}
+
+.category-heading {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  margin: 22px 0 8px 0;
+  color: var(--color-accent);
 }
 
 .menu-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #ddd;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
 }
 
-#stickyBar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #222;
-  color: white;
-  padding: 15px 20px;
+.item-info {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
-#placeOrderBtn {
-  background: #25D366;
-  color: white;
+.diet-indicator {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.diet-indicator.veg { border: 1.5px solid var(--color-veg); }
+.diet-indicator.nonveg { border: 1.5px solid var(--color-nonveg); }
+.diet-indicator::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.diet-indicator.veg::after { background: var(--color-veg); }
+.diet-indicator.nonveg::after { background: var(--color-nonveg); }
+
+.item-name {
+  font-size: 14.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-price {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 14px;
+  min-width: 55px;
+  text-align: right;
+}
+
+.item-controls { flex-shrink: 0; }
+
+.item-controls button {
+  background: var(--color-accent);
+  color: #1C1712;
   border: none;
-  padding: 10px 16px;
   border-radius: 6px;
-  font-weight: bold;
-}
-
-.qty-badge {
-  font-weight: bold;
-  margin-left: 10px;
-  color: #25D366;
-}
-
-body {
-  padding-bottom: 80px; /* so sticky bar doesn't cover last menu item */
+  padding: 6px 12px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
 }
 
 .qty-controls {
@@ -57,19 +224,144 @@ body {
 }
 
 .qty-controls button {
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: 4px;
-  background: #25D366;
-  color: white;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 5px;
 }
 
 .qty-controls span {
-  min-width: 20px;
+  min-width: 16px;
   text-align: center;
-  font-weight: bold;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* Your Order section */
+.section-heading {
+  font-family: var(--font-display);
+  padding: 0 16px;
+  margin-top: 24px;
+  font-size: 18px;
+}
+
+#cart {
+  padding: 0 16px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* Sticky bottom bar */
+#stickyBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text);
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 20;
+}
+
+#stickyText { font-weight: 600; font-size: 14px; }
+
+#placeOrderBtn {
+  background: #25D366;
+  color: #10331f;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+/* Floating "Menu" jump button */
+#menuJumpBtn {
+  position: fixed;
+  right: 16px;
+  bottom: 82px;
+  background: var(--color-accent);
+  color: #1C1712;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+  z-index: 25;
+  cursor: pointer;
+}
+
+/* Bottom sheet overlay */
+#categorySheetOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 40;
+}
+
+#categorySheetOverlay.open {
+  display: flex;
+}
+
+#categorySheet {
+  background: var(--color-surface);
+  width: 100%;
+  max-width: 500px;
+  max-height: 65vh;
+  overflow-y: auto;
+  border-radius: 16px 16px 0 0;
+  padding: 10px 20px 24px 20px;
+  transform: translateY(100%);
+  transition: transform 0.25s ease-out;
+}
+
+#categorySheetOverlay.open #categorySheet {
+  transform: translateY(0);
+}
+
+.sheet-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 999px;
+  margin: 8px auto 14px auto;
+}
+
+#categorySheet h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  margin: 0 0 10px 0;
+  color: var(--color-text-muted);
+}
+
+.category-list-item {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding: 12px 4px;
+  cursor: pointer;
+}
+
+.category-list-item:active {
+  color: var(--color-accent);
+}
+
+/* Make sure scrolling to a section doesn't hide it under the sticky top bar */
+.category-heading {
+  scroll-margin-top: 190px;
 }

@@ -11,61 +11,80 @@
 </head>
 <body>
 
-  <div id="stickyTop">
-    <div class="brand-row">
+  <!-- Welcome overlay - blocks everything until a table is picked -->
+  <div id="welcomeOverlay">
+    <div class="welcome-card">
       <h1>Paradise Cafe</h1>
       <p class="tagline">Dine in the lap of nature</p>
-    </div>
+      <p class="welcome-question">Which table are you sitting at?</p>
 
-    <div class="table-select-row">
-      <label for="tableNumber">Table</label>
-      <select id="tableNumber">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-        <option value="11">11</option>
-        <option value="12">12</option>
+      <select id="welcomeTableSelect">
+        <option value="">Select your table</option>
+        <option value="1">Table 1</option>
+        <option value="2">Table 2</option>
+        <option value="3">Table 3</option>
+        <option value="4">Table 4</option>
+        <option value="5">Table 5</option>
+        <option value="6">Table 6</option>
+        <option value="7">Table 7</option>
+        <option value="8">Table 8</option>
+        <option value="9">Table 9</option>
+        <option value="10">Table 10</option>
+        <option value="11">Table 11</option>
+        <option value="12">Table 12</option>
       </select>
-    </div>
 
-    <input type="text" id="searchInput" placeholder="Search dishes...">
+      <p id="welcomeError">Please select a table to continue.</p>
 
-    <div id="dietFilterRow">
-      <button class="diet-btn active" data-diet="all">All</button>
-      <button class="diet-btn" data-diet="veg">Veg</button>
-      <button class="diet-btn" data-diet="non-veg">Non-Veg</button>
+      <button id="continueBtn">Continue to Menu</button>
     </div>
   </div>
 
-  <div id="menuContainer">
-    <p class="loading-text">Loading menu...</p>
-  </div>
+  <!-- Everything below stays hidden until table is confirmed -->
+  <div id="mainContent">
 
-  <h2 class="section-heading">Your Order</h2>
-  <div id="cart"></div>
+    <div id="stickyTop">
+      <div class="brand-row">
+        <h1>Paradise Cafe</h1>
+        <p class="tagline">Dine in the lap of nature</p>
+      </div>
 
-  <!-- Floating jump-to-category button -->
-  <button id="menuJumpBtn">☰ Menu</button>
+      <div class="table-badge-row">
+        <span id="tableBadge">Table —</span>
+        <button id="changeTableBtn">Change</button>
+      </div>
 
-  <!-- Category jump sheet -->
-  <div id="categorySheetOverlay">
-    <div id="categorySheet">
-      <div class="sheet-handle"></div>
-      <h3>Jump to a section</h3>
-      <div id="categoryListItems"></div>
+      <input type="text" id="searchInput" placeholder="Search dishes...">
+
+      <div id="dietFilterRow">
+        <button class="diet-btn active" data-diet="all">All</button>
+        <button class="diet-btn" data-diet="veg">Veg</button>
+        <button class="diet-btn" data-diet="non-veg">Non-Veg</button>
+      </div>
     </div>
-  </div>
 
-  <div id="stickyBar">
-    <span id="stickyText">0 items · ₹0</span>
-    <button id="placeOrderBtn">Place Order via WhatsApp</button>
+    <div id="menuContainer">
+      <p class="loading-text">Loading menu...</p>
+    </div>
+
+    <h2 class="section-heading">Your Order</h2>
+    <div id="cart"></div>
+
+    <button id="menuJumpBtn">☰ Menu</button>
+
+    <div id="categorySheetOverlay">
+      <div id="categorySheet">
+        <div class="sheet-handle"></div>
+        <h3>Jump to a section</h3>
+        <div id="categoryListItems"></div>
+      </div>
+    </div>
+
+    <div id="stickyBar">
+      <span id="stickyText">0 items · ₹0</span>
+      <button id="placeOrderBtn">Place Order via WhatsApp</button>
+    </div>
+
   </div>
 
   <script src="script.js"></script>

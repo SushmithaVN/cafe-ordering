@@ -365,3 +365,106 @@ body {
 .category-heading {
   scroll-margin-top: 190px;
 }
+
+/* Welcome overlay */
+#welcomeOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.welcome-card {
+  text-align: center;
+  max-width: 340px;
+  width: 100%;
+}
+
+.welcome-card h1 {
+  font-family: var(--font-display);
+  font-size: 30px;
+  margin: 0;
+}
+
+.welcome-card .tagline {
+  margin: 4px 0 28px 0;
+}
+
+.welcome-question {
+  font-size: 15px;
+  color: var(--color-text-muted);
+  margin-bottom: 14px;
+}
+
+#welcomeTableSelect {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+#welcomeError {
+  color: var(--color-nonveg);
+  font-size: 13px;
+  margin: 0 0 16px 0;
+  display: none;
+}
+
+#welcomeError.show { display: block; }
+
+#continueBtn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-accent);
+  color: #1C1712;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* Main content hidden until table confirmed */
+#mainContent {
+  display: none;
+}
+#mainContent.visible {
+  display: block;
+}
+
+/* Table badge inside sticky top (replaces old dropdown) */
+.table-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+#tableBadge {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#changeTableBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}

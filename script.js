@@ -5,6 +5,31 @@ let allItems = [];
 let currentDiet = "all";
 let currentSearch = "";
 
+let selectedTable = null;
+
+const welcomeOverlay = document.getElementById("welcomeOverlay");
+const mainContent = document.getElementById("mainContent");
+const welcomeSelect = document.getElementById("welcomeTableSelect");
+const welcomeError = document.getElementById("welcomeError");
+
+document.getElementById("continueBtn").addEventListener("click", () => {
+  const value = welcomeSelect.value;
+  if (!value) {
+    welcomeError.classList.add("show");
+    return;
+  }
+  selectedTable = value;
+  document.getElementById("tableBadge").textContent = `Table ${selectedTable}`;
+  welcomeOverlay.style.display = "none";
+  mainContent.classList.add("visible");
+});
+
+document.getElementById("changeTableBtn").addEventListener("click", () => {
+  welcomeSelect.value = selectedTable || "";
+  welcomeError.classList.remove("show");
+  welcomeOverlay.style.display = "flex";
+});
+
 fetch(SHEET_URL)
   .then(response => response.text())
   .then(csvText => {

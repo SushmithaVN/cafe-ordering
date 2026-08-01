@@ -1,12 +1,13 @@
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSL24iA2RQTpRyDr2Z_upfRle5XCCeG6TIG4EKv-f9WiVpXXyhaVd7pPyYJACbMR97Sv5x6mQ_3362i/pub?gid=409951925&single=true&output=csv";
+const ORDER_LOG_URL = "https://script.google.com/macros/s/AKfycbzmkk2c2YYk1u6KR82MuEDWAnz-ewvriIl-PMY_-b9ioueemcVpCIKP9NRjRItCBYBJKg/exec";
 
 let cart = [];
 let allItems = [];
 let currentDiet = "all";
 let currentSearch = "";
-
 let selectedTable = null;
 
+// ---- Welcome screen ----
 const welcomeOverlay = document.getElementById("welcomeOverlay");
 const mainContent = document.getElementById("mainContent");
 const welcomeSelect = document.getElementById("welcomeTableSelect");
@@ -30,6 +31,7 @@ document.getElementById("changeTableBtn").addEventListener("click", () => {
   welcomeOverlay.style.display = "flex";
 });
 
+// ---- Load menu from Google Sheet ----
 fetch(SHEET_URL)
   .then(response => response.text())
   .then(csvText => {
@@ -43,7 +45,7 @@ fetch(SHEET_URL)
     console.error("Menu load error:", error);
   });
 
-// Diet filter buttons (All / Veg / Non-Veg)
+// ---- Diet filter buttons (All / Veg / Non-Veg) ----
 document.querySelectorAll(".diet-btn").forEach(btn => {
   btn.addEventListener("click", () => {
     currentDiet = btn.dataset.diet;
@@ -53,7 +55,7 @@ document.querySelectorAll(".diet-btn").forEach(btn => {
   });
 });
 
-// Search box
+// ---- Search box ----
 document.getElementById("searchInput").addEventListener("input", (e) => {
   currentSearch = e.target.value.toLowerCase().trim();
   renderFilteredMenu();
@@ -62,7 +64,9 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
 function renderFilteredMenu() {
   const filtered = allItems.filter(item => {
     const matchesDiet = currentDiet === "all" || item.Type.toLowerCase() === currentDiet;
-    const matchesSearch = item.Item.toLowerCase().includes(currentSearch);
+    const matchesSearch =
+      item.Item.toLowerCase().includes(currentSearch) ||
+      item.Category.toLowerCase().includes(currentSearch);
     return matchesDiet && matchesSearch;
   });
   buildMenu(filtered);
@@ -84,8 +88,40 @@ function buildMenu(items) {
     grouped[item.Category].push(item);
   });
 
-  for (const category in grouped) {
+  // Pin specific categories to the top, in this exact order, regardless of sheet row order
+  const pinnedOrder = ["Cigarettes"];
+  const orderedGrouped = {};
+
+  pinnedOrder.forEach(cat => {
+    if (grouped[cat]) {
+      orderedGrouped[cat] = grouped[cat];
+      delete grouped[cat];
+    }
+  });
+
+  // Add all remaining categories after, in their normal order
+  Object.keys(grouped).forEach(cat => {
+    orderedGrouped[cat] = grouped[cat];
+  });
+
+  for (const category in orderedGrouped) {
     const slug = "cat-" + category.replace(/\s+/g, "-").toLowerCase();
+    const imageSlug = category.replace(/\s+/g, "-").toLowerCase();
+
+    // Category banner photo - tries .jpg first, then .png, hides gracefully if neither exists
+    const banner = document.createElement("img");
+    banner.className = "category-banner";
+    banner.alt = category;
+    banner.src = `images/${imageSlug}.jpg`;
+    banner.onerror = function () {
+      if (!this.dataset.triedPng) {
+        this.dataset.triedPng = "true";
+        this.src = `images/${imageSlug}.png`;
+      } else {
+        this.classList.add("hidden");
+      }
+    };
+    container.appendChild(banner);
 
     const heading = document.createElement("h2");
     heading.className = "category-heading";
@@ -93,13 +129,13 @@ function buildMenu(items) {
     heading.textContent = category;
     container.appendChild(heading);
 
-    grouped[category].forEach(item => container.appendChild(buildItemRow(item)));
+    orderedGrouped[category].forEach(item => container.appendChild(buildItemRow(item)));
   }
 
-  populateCategorySheet(Object.keys(grouped));
+  populateCategorySheet(Object.keys(orderedGrouped));
 }
 
-// Fills the bottom sheet with a clickable list of the categories currently visible
+// Fills the bottom "Menu" sheet with a clickable list of visible categories
 function populateCategorySheet(categories) {
   const listDiv = document.getElementById("categoryListItems");
   listDiv.innerHTML = "";
@@ -117,13 +153,11 @@ function populateCategorySheet(categories) {
   });
 }
 
-// Open/close the bottom sheet
 document.getElementById("menuJumpBtn").addEventListener("click", () => {
   document.getElementById("categorySheetOverlay").classList.add("open");
 });
 
 document.getElementById("categorySheetOverlay").addEventListener("click", (e) => {
-  // Only close if the dark backdrop itself was clicked, not the sheet content
   if (e.target.id === "categorySheetOverlay") {
     e.currentTarget.classList.remove("open");
   }
@@ -136,14 +170,19 @@ function buildItemRow(item) {
   const info = document.createElement("div");
   info.className = "item-info";
 
-  const dietDot = document.createElement("span");
-  dietDot.className = "diet-indicator " + (item.Type.toLowerCase() === "veg" ? "veg" : "nonveg");
+  const type = item.Type.toLowerCase();
+
+  // Only show the veg/non-veg dot for actual food items - skip it for anything else (like Cigarettes)
+  if (type === "veg" || type === "non-veg") {
+    const dietDot = document.createElement("span");
+    dietDot.className = "diet-indicator " + (type === "veg" ? "veg" : "nonveg");
+    info.appendChild(dietDot);
+  }
 
   const name = document.createElement("span");
   name.className = "item-name";
   name.textContent = item.Item;
 
-  info.appendChild(dietDot);
   info.appendChild(name);
 
   const price = document.createElement("span");
@@ -236,8 +275,8 @@ function updateCartDisplay() {
   stickyText.textContent = `${totalItems} items · ₹${total}`;
 }
 
-// ---- WhatsApp ordering ----
-const OWNER_WHATSAPP_NUMBER = "919036308008"; // <-- put your real number back here
+// ---- WhatsApp ordering + silent order logging ----
+const OWNER_WHATSAPP_NUMBER = "919036308008";
 
 document.getElementById("placeOrderBtn").addEventListener("click", () => {
   if (cart.length === 0) {
@@ -245,7 +284,7 @@ document.getElementById("placeOrderBtn").addEventListener("click", () => {
     return;
   }
 
-  const tableNumber = document.getElementById("tableNumber").value;
+  const tableNumber = selectedTable;
 
   let message = `*New Order - Paradise Cafe*\n`;
   message += `Table No: ${tableNumber}\n\n`;
@@ -259,6 +298,18 @@ document.getElementById("placeOrderBtn").addEventListener("click", () => {
   });
 
   message += `\n*Total: ₹${total}*`;
+
+  // Silently log this order to Google Sheets for later analysis
+  fetch(ORDER_LOG_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify({
+      table: tableNumber,
+      items: cart
+    })
+  }).catch(err => console.error("Order logging failed:", err));
 
   const encodedMessage = encodeURIComponent(message);
   const whatsappURL = `https://wa.me/${OWNER_WHATSAPP_NUMBER}?text=${encodedMessage}`;

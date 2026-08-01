@@ -63,7 +63,7 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
 
 function renderFilteredMenu() {
   const filtered = allItems.filter(item => {
-    const matchesDiet = currentDiet === "all" || item.Type.toLowerCase() === currentDiet;
+    const matchesDiet = currentDiet === "all" || item.Type.trim().toLowerCase() === currentDiet;
     const matchesSearch =
       item.Item.toLowerCase().includes(currentSearch) ||
       item.Category.toLowerCase().includes(currentSearch);
@@ -170,7 +170,7 @@ function buildItemRow(item) {
   const info = document.createElement("div");
   info.className = "item-info";
 
-  const type = item.Type.toLowerCase();
+  const type = item.Type.trim().toLowerCase();
 
   // Only show the veg/non-veg dot for actual food items - skip it for anything else (like Cigarettes)
   if (type === "veg" || type === "non-veg") {

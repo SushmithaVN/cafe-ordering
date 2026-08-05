@@ -7,26 +7,66 @@ let currentDiet = "all";
 let currentSearch = "";
 let selectedTable = null;
 
-// ---- Welcome screen ----
+// ---- Welcome screen: section + table picker ----
 const welcomeOverlay = document.getElementById("welcomeOverlay");
 const mainContent = document.getElementById("mainContent");
-const welcomeSelect = document.getElementById("welcomeTableSelect");
 const welcomeError = document.getElementById("welcomeError");
+const tableGrid = document.getElementById("tableGrid");
+
+const sections = {
+  garden: ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15"],
+  rooftop: ["A","B","C","D","E","F"]
+};
+
+let currentSection = "garden";
+let pendingTable = null; // table tapped but not yet confirmed via "Continue"
+
+function renderTableGrid() {
+  tableGrid.innerHTML = "";
+  sections[currentSection].forEach(tableId => {
+    const btn = document.createElement("button");
+    btn.className = "table-btn" + (pendingTable === tableId ? " selected" : "");
+    btn.textContent = tableId;
+    btn.addEventListener("click", () => {
+      pendingTable = tableId;
+      welcomeError.classList.remove("show");
+      renderTableGrid();
+    });
+    tableGrid.appendChild(btn);
+  });
+}
+
+document.querySelectorAll(".section-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentSection = btn.dataset.section;
+    pendingTable = null;
+    document.querySelectorAll(".section-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderTableGrid();
+  });
+});
+
+renderTableGrid(); // show Garden's tables by default on page load
 
 document.getElementById("continueBtn").addEventListener("click", () => {
-  const value = welcomeSelect.value;
-  if (!value) {
+  if (!pendingTable) {
     welcomeError.classList.add("show");
     return;
   }
-  selectedTable = value;
+  selectedTable = pendingTable;
   document.getElementById("tableBadge").textContent = `Table ${selectedTable}`;
   welcomeOverlay.style.display = "none";
   mainContent.classList.add("visible");
 });
 
 document.getElementById("changeTableBtn").addEventListener("click", () => {
-  welcomeSelect.value = selectedTable || "";
+  pendingTable = selectedTable;
+  // Show whichever section the current table belongs to
+  currentSection = sections.garden.includes(selectedTable) ? "garden" : "rooftop";
+  document.querySelectorAll(".section-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.section === currentSection);
+  });
+  renderTableGrid();
   welcomeError.classList.remove("show");
   welcomeOverlay.style.display = "flex";
 });
@@ -63,7 +103,7 @@ document.getElementById("searchInput").addEventListener("input", (e) => {
 
 function renderFilteredMenu() {
   const filtered = allItems.filter(item => {
-    const matchesDiet = currentDiet === "all" || item.Type.trim().toLowerCase() === currentDiet;
+    const matchesDiet = currentDiet === "all" || item.Type.toLowerCase() === currentDiet;
     const matchesSearch =
       item.Item.toLowerCase().includes(currentSearch) ||
       item.Category.toLowerCase().includes(currentSearch);
@@ -170,7 +210,7 @@ function buildItemRow(item) {
   const info = document.createElement("div");
   info.className = "item-info";
 
-  const type = item.Type.trim().toLowerCase();
+  const type = item.Type.toLowerCase();
 
   // Only show the veg/non-veg dot for actual food items - skip it for anything else (like Cigarettes)
   if (type === "veg" || type === "non-veg") {

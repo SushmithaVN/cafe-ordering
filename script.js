@@ -129,7 +129,7 @@ function buildMenu(items) {
   });
 
   // Pin specific categories to the top, in this exact order, regardless of sheet row order
-  const pinnedOrder = ["Cigarettes"];
+  const pinnedOrder = ["Hot Beverage", "Cigarettes"];
   const orderedGrouped = {};
 
   pinnedOrder.forEach(cat => {
